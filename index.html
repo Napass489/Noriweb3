@@ -1,0 +1,843 @@
+<!-- ... existing code ... -->
+          <!-- ปุ่มแผ่นเสียงไวนิล (ปรับขอบเป็นสีฟ้าพาสเทลละมุน ไม่เข้มทึบ) -->
+          <button
+            type="button"
+            onclick="toggleMusicPopover()"
+            aria-label="เปิดเครื่องเล่นแผ่นเสียงและเลือกเพลง"
+            class="relative w-12 h-12 sm:w-13 sm:h-13 rounded-full p-[3.5px] bg-gradient-to-tr from-[#9BC8F2] via-[#D7EDFF] to-[#B3D9FF] border border-white shadow-md hover:scale-105 active:scale-95 transition flex items-center justify-center group"
+          >
+            <!-- ร่องแผ่นเสียงจำลอง -->
+            <div
+              id="music-disc-graphic"
+              class="w-full h-full rounded-full overflow-hidden relative border-2 border-white/90 disc-spinning disc-paused shadow-inner"
+            >
+              <img
+                id="music-disc-img"
+                src="https://i.postimg.cc/RZZYWZsC/IMG-9046.jpg"
+                alt="Music Disc"
+                class="w-full h-full object-cover"
+                onerror="this.onerror=null;this.src='https://placehold.co/120x120/D7EDFF/173D5C?text=Music';"
+              />
+              <!-- เงาสะท้อนแผ่นเสียงและรูตรงกลางโทนพาสเทล -->
+              <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/25 to-transparent pointer-events-none"></div>
+              <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-white border-2 border-[#8AB8E6] shadow-inner"></div>
+            </div>
+
+            <!-- ไอคอนสถานะตัวโน้ตมุมขวาล่างแผ่นเสียง -->
+            <span
+              id="music-status-dot"
+              class="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-hippo-pill text-hippo-navy border border-white flex items-center justify-center text-[10px] font-bold shadow-2xs"
+            >
+              ♪
+            </span>
+          </button>
+
+          <!-- กล่องเลือกเพลงและควบคุมแผ่นเสียง (Music Player Popover พร้อมปุ่มกากบาทปิด) -->
+          <div
+            id="music-popover"
+            onclick="event.stopPropagation()"
+            class="hidden absolute right-0 mt-2.5 w-68 bg-white/98 backdrop-blur-md rounded-[24px] border-2 border-hippo-pill shadow-2xl p-3.5 z-50 space-y-2.5"
+          >
+            <div class="flex items-center justify-between gap-1.5 border-b border-hippo-cardBorder pb-2">
+              <div class="min-w-0 flex-1">
+                <div class="text-[10.5px] font-bold text-hippo-btn uppercase tracking-wider flex items-center gap-1">
+                  <span>🎵 แผ่นเสียงร้าน NongHippo</span>
+                </div>
+                <div id="music-current-title" class="text-xs font-bold text-hippo-navy truncate mt-0.5">
+                  1. Hippo Pastel Music Box
+                </div>
+              </div>
+              <button
+                type="button"
+                id="music-play-toggle-btn"
+                onclick="toggleMusicPlayback()"
+                class="px-2.5 py-1 rounded-full bg-hippo-btn hover:bg-hippo-btnHover text-white text-[11px] font-bold flex items-center gap-1 shadow-2xs transition flex-shrink-0"
+              >
+                <span id="music-play-btn-text">▶ เล่น</span>
+              </button>
+              <button
+                type="button"
+                onclick="toggleMusicPopover(false)"
+                aria-label="ปิดหน้าต่างเลือกเพลง"
+                class="w-7 h-7 rounded-full bg-hippo-bg hover:bg-hippo-pill text-hippo-navy flex items-center justify-center text-xs font-bold transition flex-shrink-0 border border-hippo-cardBorder"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div class="text-[11px] font-semibold text-hippo-navyMuted">เลือกเปลี่ยนเพลง:</div>
+            <div id="music-track-list" class="space-y-1 max-h-44 overflow-y-auto pr-0.5">
+              <!-- รายการเพลงถูกสร้างอัตโนมัติ -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+<!-- ... existing code ... -->
+      <!-- ===============================================================
+           แท็บที่ 2: หน้ากลุ่ม (GROUPS TAB) + หน้ารายการย่อยในกลุ่ม (เปิดเป็นหน้าแยก ไม่ใช่ป๊อปอัพ)
+      ================================================================ -->
+      <section id="tab-groups" class="tab-panel hidden">
+        <!-- มุมมองที่ 1: รายการกลุ่มทั้งหมด -->
+        <div id="groups-main-view">
+          <!-- หัวข้อหน้ากลุ่มจัดกึ่งกลาง -->
+          <div class="px-4 pt-2 pb-1">
+            <div class="bg-hippo-pill rounded-full px-4 py-2 border border-hippo-pillBorder/60 flex items-center justify-center gap-2 text-center relative">
+              <svg class="w-5 h-5 text-hippo-navy stroke-[2.2]" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+              </svg>
+              <h2 class="text-[18px] font-bold text-hippo-navy tracking-wide">กลุ่ม</h2>
+              <button
+                type="button"
+                onclick="openGroupAdminModal(-1)"
+                class="admin-only-btn hidden absolute right-2.5 text-xs font-bold bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 px-2.5 py-0.5 rounded-full"
+              >
+                + เพิ่มกลุ่ม
+              </button>
+            </div>
+          </div>
+
+          <!-- รายการการ์ดกลุ่ม -->
+          <div id="groups-list" class="px-4 pt-3 pb-6 space-y-4">
+            <!-- การ์ดกลุ่มถูกสร้างจาก SITE_DATA.groups -->
+          </div>
+        </div>
+
+        <!-- มุมมองที่ 2: หน้ารายการย่อยของกลุ่ม (แสดงเป็นหน้าเต็มแทนป๊อปอัพเมื่อกดดูเพิ่มเติม) -->
+        <div id="groups-detail-view" class="hidden px-4 pt-2 pb-6 space-y-3.5 tab-animate">
+          <!-- แถบหัวข้อหน้ารายการย่อย พร้อมปุ่มย้อนกลับ -->
+          <div class="bg-white rounded-[24px] p-3 border border-hippo-cardBorder shadow-hippo-card flex items-center justify-between gap-2">
+            <button
+              type="button"
+              onclick="closeGroupSubItemsPage()"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-hippo-pill/80 hover:bg-hippo-pill text-hippo-navy font-bold text-xs transition flex-shrink-0"
+            >
+              <svg class="w-4 h-4 stroke-[2.5]" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+              </svg>
+              <span>กลับหน้ากลุ่ม</span>
+            </button>
+
+            <div class="min-w-0 text-center flex-1 px-1">
+              <div class="text-[10px] font-bold text-hippo-btn uppercase tracking-wider">รายการย่อยในกลุ่ม</div>
+              <h3 id="group-subitems-title" class="text-[16px] sm:text-[17px] font-bold text-hippo-navy truncate">
+                ชื่อกลุ่ม
+              </h3>
+            </div>
+
+            <button
+              type="button"
+              id="add-subitem-admin-btn"
+              onclick="openSubItemAdminModal(activeGroupModalIndex, -1)"
+              class="admin-only-btn hidden text-[11px] font-bold bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 px-2.5 py-1 rounded-full flex-shrink-0"
+            >
+              + เพิ่มรายการย่อย
+            </button>
+          </div>
+
+          <!-- รายการการ์ดย่อยแต่ละอันในกลุ่ม -->
+          <div id="group-subitems-list" class="space-y-3">
+            <!-- สร้างอัตโนมัติจาก SITE_DATA.groups[index].subItems -->
+          </div>
+
+          <button
+            type="button"
+            onclick="closeGroupSubItemsPage()"
+            class="w-full py-2.5 rounded-full bg-white hover:bg-hippo-pill/60 border border-hippo-cardBorder text-hippo-navy font-bold text-sm transition shadow-2xs"
+          >
+            ← กลับไปหน้ารวมกลุ่มทั้งหมด
+          </button>
+        </div>
+      </section>
+<!-- ... existing code ... -->
+    <!-- ===============================================================
+         เมนูด้านล่าง 4 แท็บ (BOTTOM NAVIGATION BAR — ดีไซน์ Floating Pill เข้ากับส่วนหัวเว็บใหม่)
+    ================================================================ -->
+    <nav
+      aria-label="เมนูหลักด้านล่าง"
+      class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[520px] z-30 px-3 pb-2.5 pt-1 bottom-nav-safe pointer-events-none"
+    >
+      <div class="pointer-events-auto bg-white/95 backdrop-blur-md border border-hippo-cardBorder shadow-[0_8px_28px_rgba(23,61,92,0.12)] rounded-[28px] p-1.5 grid grid-cols-4 gap-1.5">
+        <!-- แท็บ 1: หน้าหลัก -->
+        <button
+          type="button"
+          onclick="switchTab('home')"
+          id="nav-btn-home"
+          class="nav-tab-btn group flex flex-col items-center justify-center py-1.5 px-2 rounded-[22px] transition-all duration-200 bg-hippo-pill text-hippo-navy font-bold shadow-2xs"
+        >
+          <svg class="w-5 h-5 mb-0.5 stroke-[2.2]" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1h-5.5v-6h-5v6H4a1 1 0 01-1-1v-9.5z"/>
+          </svg>
+          <span class="text-[12px] leading-tight">หน้าหลัก</span>
+        </button>
+
+        <!-- แท็บ 2: กลุ่ม -->
+        <button
+          type="button"
+          onclick="switchTab('groups')"
+          id="nav-btn-groups"
+          class="nav-tab-btn group flex flex-col items-center justify-center py-1.5 px-2 rounded-[22px] transition-all duration-200 text-hippo-navyMuted hover:text-hippo-navy hover:bg-hippo-softBlue/60 font-medium"
+        >
+          <svg class="w-5 h-5 mb-0.5 stroke-[2]" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+          </svg>
+          <span class="text-[12px] leading-tight">กลุ่ม</span>
+        </button>
+
+        <!-- แท็บ 3: งานปล่อยเอฟ -->
+        <button
+          type="button"
+          onclick="switchTab('fsale')"
+          id="nav-btn-fsale"
+          class="nav-tab-btn group flex flex-col items-center justify-center py-1.5 px-2 rounded-[22px] transition-all duration-200 text-hippo-navyMuted hover:text-hippo-navy hover:bg-hippo-softBlue/60 font-medium"
+        >
+          <svg class="w-5 h-5 mb-0.5 stroke-[2]" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <rect x="3" y="4" width="18" height="16" rx="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="8.5" cy="9" r="1.5"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 15l-4.5-4.5L9 18"/>
+          </svg>
+          <span class="text-[12px] leading-tight whitespace-nowrap">งานปล่อยเอฟ</span>
+        </button>
+
+        <!-- แท็บ 4: ฟอนต์ -->
+        <button
+          type="button"
+          onclick="switchTab('fonts')"
+          id="nav-btn-fonts"
+          class="nav-tab-btn group flex flex-col items-center justify-center py-1.5 px-2 rounded-[22px] transition-all duration-200 text-hippo-navyMuted hover:text-hippo-navy hover:bg-hippo-softBlue/60 font-medium"
+        >
+          <span class="text-[17px] font-bold leading-5 mb-0.5 tracking-tight">Aa</span>
+          <span class="text-[12px] leading-tight">ฟอนต์</span>
+        </button>
+      </div>
+    </nav>
+  </div>
+
+  <!-- =====================================================================
+       MODAL 1: กล่องแสดงข้อมูลบัญชีธนาคาร & วอเลต (BANK & WALLET TABS MODAL)
+  ====================================================================== -->
+  <div
+    id="bank-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="bank-modal-title"
+    class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-hippo-navy/45 backdrop-blur-[2px] transition-opacity"
+    onclick="handleBackdropClick(event, 'bank-modal')"
+  >
+    <div class="bg-white w-full max-w-[430px] rounded-[28px] border-2 border-hippo-pill overflow-hidden shadow-2xl transform transition-all flex flex-col max-h-[86vh]">
+      <!-- หัวกล่องข้อมูลบัญชี -->
+      <div class="bg-hippo-pill px-5 py-3.5 flex items-center justify-between border-b border-hippo-pillBorder flex-shrink-0">
+        <div class="flex items-center gap-2.5">
+          <span class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-hippo-navy shadow-sm">
+            <svg class="w-4 h-4 stroke-[2.3]" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+            </svg>
+          </span>
+          <h3 id="bank-modal-title" class="text-[17px] font-bold text-hippo-navy">
+            ช่องทางการโอนเงิน
+          </h3>
+        </div>
+        <button
+          type="button"
+          onclick="closeModal('bank-modal')"
+          aria-label="ปิดหน้าต่างข้อมูลบัญชี"
+          class="w-8 h-8 rounded-full bg-white/80 hover:bg-white text-hippo-navy flex items-center justify-center transition font-bold"
+        >
+          ✕
+        </button>
+      </div>
+
+      <!-- ปุ่มสลับแท็บ ธนาคาร / วอเลต -->
+      <div class="px-5 pt-3.5 pb-1 bg-white flex-shrink-0">
+        <div class="grid grid-cols-2 gap-2 bg-hippo-bg p-1.5 rounded-full border border-hippo-cardBorder">
+          <button
+            type="button"
+            id="payment-tab-btn-bank"
+            onclick="switchPaymentTab('bank')"
+            class="py-2 px-3 rounded-full text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 bg-hippo-btn text-white shadow-xs"
+          >
+            <span>🏦 ธนาคาร</span>
+          </button>
+          <button
+            type="button"
+            id="payment-tab-btn-wallet"
+            onclick="switchPaymentTab('wallet')"
+            class="py-2 px-3 rounded-full text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 text-hippo-navy hover:bg-hippo-pill/50"
+          >
+            <span>📱 วอเลต (Wallet)</span>
+          </button>
+        </div>
+
+        <!-- ปุ่มแอดมินสำหรับเพิ่มบัญชีในแท็บที่เปิดอยู่ -->
+        <div class="admin-only-btn hidden mt-2.5 flex justify-end">
+          <button
+            type="button"
+            onclick="openBankAdminModal(-1, activePaymentTab)"
+            class="text-xs font-bold bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 px-3 py-1 rounded-full transition"
+          >
+            + เพิ่มรายการในแท็บนี้
+          </button>
+        </div>
+      </div>
+
+      <!-- เนื้อหาบัญชีธนาคาร / วอเลต -->
+      <div class="p-5 pt-3 space-y-3.5 overflow-y-auto flex-1">
+        <div id="bank-accounts-container" class="space-y-3">
+          <!-- รายการบัญชีธนาคารหรือวอเลตถูกสร้างจาก SITE_DATA.bankAccounts -->
+        </div>
+
+        <button
+          type="button"
+          onclick="closeModal('bank-modal')"
+          class="w-full py-2.5 rounded-full border border-hippo-cardBorder bg-hippo-bg hover:bg-hippo-pill/50 text-hippo-navy font-semibold text-sm transition"
+        >
+          ปิดหน้าต่างนี้
+        </button>
+      </div>
+    </div>
+  </div>
+<!-- ... existing code ... -->
+  <!-- =====================================================================
+       ส่วนชุดข้อมูลและระบบควบคุม (EDITABLE DATA CONFIGURATION & LOGIC)
+  ====================================================================== -->
+  <script>
+    /**
+     * ============================================================================
+     * 1. ชุดข้อมูลหลักของเว็บไซต์ (SITE_DATA) + ระบบบันทึก LocalStorage สำหรับแอดมิน
+     * ============================================================================
+     */
+    const STORAGE_KEY = 'NONGHIPPO_SITE_DATA_V4';
+    let isAdminMode = false;
+    let activeGroupModalIndex = 0;
+    let activePaymentTab = 'bank';
+
+    const DEFAULT_SITE_DATA = {
+      // ข้อมูลส่วนหัวเว็บและแผ่นเสียงเพลง (ใส่ท่วงทำนองเพลงกล่องดนตรีที่เล่นได้จริงและได้ยินชัดเจน)
+      brandHeader: {
+        name: 'NongHippo',
+        badge: 'Official',
+        subtitle: 'รวมผลงานสติ๊กเกอร์ ของตกแต่ง & ฟอนต์น่ารัก ✨',
+        logoUrl: 'https://i.postimg.cc/DZh9HDR8/att-M3asi-Xguj-W3IZ3m-Ab9uro-JUz-YHko1YXX74ez-Vh8f-Fk.jpg',
+        discImageUrl: 'https://i.postimg.cc/RZZYWZsC/IMG-9046.jpg',
+        musicTracks: [
+          {
+            id: 'track-1',
+            name: '1. Hippo Pastel Music Box',
+            tempo: 132,
+            notes: [523.25, 659.25, 783.99, 1046.5, 987.77, 783.99, 659.25, 783.99, 698.46, 587.33, 659.25, 523.25, 587.33, 659.25, 783.99, 659.25]
+          },
+          {
+            id: 'track-2',
+            name: '2. Sweet Cloud Lullaby',
+            tempo: 112,
+            notes: [659.25, 783.99, 880.0, 1046.5, 880.0, 783.99, 659.25, 523.25, 587.33, 659.25, 783.99, 659.25, 587.33, 523.25]
+          },
+          {
+            id: 'track-3',
+            name: '3. Afternoon Cafe Waltz',
+            tempo: 138,
+            notes: [587.33, 698.46, 880.0, 1174.66, 1046.5, 880.0, 783.99, 698.46, 659.25, 783.99, 659.25, 523.25]
+          },
+          {
+            id: 'track-4',
+            name: '4. Starlight Note Waltz',
+            tempo: 120,
+            notes: [523.25, 783.99, 659.25, 1046.5, 880.0, 1046.5, 783.99, 659.25, 698.46, 880.0, 783.99, 587.33]
+          }
+        ]
+      },
+// ... existing code ...
+      // ข้อมูลบัญชีธนาคารและวอเลต (แยกตาม category: 'bank' หรือ 'wallet' รองรับหลายบัญชีและใส่รูปโลโก้/QR ได้)
+      bankAccounts: [
+        {
+          id: 'kbank-1',
+          category: 'bank',
+          bankName: 'ธนาคารกสิกรไทย (KBank)',
+          bankColor: '#138F2D',
+          accountName: 'น.ส. น้องฮิปโป สตูดิโอ',
+          accountNumber: '123-4-56789-0',
+          branch: 'บัญชีหลัก',
+          imageUrl: ''
+        },
+        {
+          id: 'scb-1',
+          category: 'bank',
+          bankName: 'ธนาคารไทยพาณิชย์ (SCB)',
+          bankColor: '#4E2A84',
+          accountName: 'น.ส. น้องฮิปโป สตูดิโอ',
+          accountNumber: '987-6-54321-0',
+          branch: 'บัญชีสำรอง',
+          imageUrl: ''
+        },
+        {
+          id: 'truemoney-1',
+          category: 'wallet',
+          bankName: 'TrueMoney Wallet (ทรูมันนี่ วอเลต)',
+          bankColor: '#FF6600',
+          accountName: 'น.ส. น้องฮิปโป สตูดิโอ',
+          accountNumber: '089-123-4567',
+          branch: 'โอนผ่านเบอร์วอเลต',
+          imageUrl: ''
+        },
+        {
+          id: 'shopeepay-1',
+          category: 'wallet',
+          bankName: 'ShopeePay / PromptPay วอเลต',
+          bankColor: '#EE4D2D',
+          accountName: 'น.ส. น้องฮิปโป สตูดิโอ',
+          accountNumber: '089-123-4567',
+          branch: 'พร้อมเพย์ / วอเลตสำรอง',
+          imageUrl: ''
+        }
+      ],
+// ... existing code ...
+    // เปิดหน้ารายการย่อยของกลุ่ม (เปลี่ยนเป็นหน้าเต็มภายในแท็บกลุ่ม ไม่ใช่ป๊อปอัพ)
+    function openGroupSubItemsModal(groupIndex) {
+      activeGroupModalIndex = groupIndex;
+      const group = SITE_DATA.groups[groupIndex];
+      if (!group) return;
+
+      // สลับมาที่แท็บกลุ่มหากไม่ได้อยู่ในแท็บกลุ่ม
+      if (currentTab !== 'groups') {
+        switchTab('groups');
+      }
+
+      document.getElementById('group-subitems-title').textContent = group.title.replace(/\n/g, ' ');
+
+      const listEl = document.getElementById('group-subitems-list');
+      const subItems = group.subItems || [];
+
+      listEl.innerHTML = subItems.map((sub, sIdx) => `
+        <div class="group-subitem-card relative bg-white rounded-[26px] p-3.5 sm:p-4 border border-hippo-cardBorder shadow-hippo-card flex items-start gap-3.5">
+          ${
+            isAdminMode
+              ? `<button
+                   type="button"
+                   onclick="event.stopPropagation(); openSubItemAdminModal(${groupIndex}, ${sIdx});"
+                   class="absolute top-2.5 right-2.5 bg-amber-100 hover:bg-amber-200 text-amber-950 border border-amber-300 text-[11px] font-bold px-2.5 py-0.5 rounded-full shadow z-10"
+                 >✏️ แก้ไข</button>`
+              : ''
+          }
+          <!-- รูปด้านซ้ายในกรอบโค้งมน -->
+          <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden bg-hippo-softBlue border border-hippo-cardBorder flex-shrink-0 mt-0.5">
+            ${
+              sub.imageUrl
+                ? `<img src="${sub.imageUrl}" alt="${sub.name}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='https://placehold.co/160x160/D7EDFF/173D5C?text=Group';"/>`
+                : getArtworkSVG(sub.art || group.coverArt)
+            }
+          </div>
+
+          <!-- ข้อมูลตรงกลาง + ปุ่มดูตัวอย่างอยู่มุมขวาล่าง -->
+          <div class="flex-1 min-w-0 flex flex-col">
+            <div class="flex items-center gap-1.5 flex-wrap ${isAdminMode ? 'pr-16' : ''}">
+              <h4 class="text-[14.5px] sm:text-[15.5px] font-bold text-hippo-navy leading-snug">
+                ${sub.name}
+              </h4>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-hippo-pill text-hippo-btn border border-hippo-pillBorder">
+                ราคา ${sub.price}
+              </span>
+            </div>
+            <p class="text-[12px] text-hippo-navyMuted leading-snug mt-1">
+              ${sub.detail}
+            </p>
+            <div class="mt-2.5 flex justify-end">
+              <a
+                href="${sub.driveUrl || 'https://drive.google.com'}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-hippo-btn hover:bg-hippo-btnHover active:scale-95 text-white text-[12px] font-semibold transition shadow-2xs"
+              >
+                <svg class="w-3.5 h-3.5 stroke-[2.2]" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                </svg>
+                <span>ดูตัวอย่าง (Drive)</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      document.getElementById('groups-main-view').classList.add('hidden');
+      const detailView = document.getElementById('groups-detail-view');
+      detailView.classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function closeGroupSubItemsPage() {
+      const detailView = document.getElementById('groups-detail-view');
+      const mainView = document.getElementById('groups-main-view');
+      if (detailView && mainView) {
+        detailView.classList.add('hidden');
+        mainView.classList.remove('hidden');
+      }
+    }
+// ... existing code ...
+    // สลับแท็บ ธนาคาร / วอเลต ในหน้าต่างข้อมูลการโอนเงิน
+    function switchPaymentTab(tabType) {
+      activePaymentTab = tabType === 'wallet' ? 'wallet' : 'bank';
+      const bankBtn = document.getElementById('payment-tab-btn-bank');
+      const walletBtn = document.getElementById('payment-tab-btn-wallet');
+
+      if (bankBtn && walletBtn) {
+        if (activePaymentTab === 'bank') {
+          bankBtn.className = 'py-2 px-3 rounded-full text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 bg-hippo-btn text-white shadow-xs';
+          walletBtn.className = 'py-2 px-3 rounded-full text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 text-hippo-navy hover:bg-hippo-pill/50';
+        } else {
+          walletBtn.className = 'py-2 px-3 rounded-full text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 bg-hippo-btn text-white shadow-xs';
+          bankBtn.className = 'py-2 px-3 rounded-full text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 text-hippo-navy hover:bg-hippo-pill/50';
+        }
+      }
+      renderBankAccounts();
+    }
+
+    // สร้างรายการบัญชีธนาคารและวอเลต (รองรับหลายบัญชีและแสดงรูปภาพ/QR ได้)
+    function renderBankAccounts() {
+      const container = document.getElementById('bank-accounts-container');
+      if (!container) return;
+
+      const allAccounts = SITE_DATA.bankAccounts || [];
+      const filtered = allAccounts
+        .map((acc, originalIndex) => ({ acc, originalIndex }))
+        .filter(({ acc }) => {
+          const cat = acc.category || 'bank';
+          return cat === activePaymentTab;
+        });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="bg-hippo-bg border border-hippo-cardBorder rounded-2xl p-6 text-center text-xs text-hippo-navyMuted">
+            ยังไม่มีรายการในหมวด${activePaymentTab === 'wallet' ? 'วอเลต' : 'ธนาคาร'}
+            ${isAdminMode ? '<br><span class="text-hippo-btn font-bold">กดปุ่ม "+ เพิ่มรายการในแท็บนี้" ด้านบนได้เลย</span>' : ''}
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(({ acc, originalIndex }) => `
+        <div class="relative bg-hippo-bg border border-hippo-cardBorder rounded-2xl p-4 space-y-2.5">
+          ${
+            isAdminMode
+              ? `<div class="flex justify-end">
+                   <button
+                     type="button"
+                     onclick="openBankAdminModal(${originalIndex})"
+                     class="bg-amber-100 hover:bg-amber-200 text-amber-950 border border-amber-300 text-[11px] font-bold px-2.5 py-0.5 rounded-full shadow"
+                   >✏️ แก้ไขรายการนี้</button>
+                 </div>`
+              : ''
+          }
+          <div class="flex items-center justify-between gap-2.5">
+            <div class="flex items-center gap-2.5 min-w-0">
+              ${
+                acc.imageUrl
+                  ? `<img
+                       src="${acc.imageUrl}"
+                       alt="${acc.bankName}"
+                       class="w-11 h-11 rounded-xl object-cover border border-hippo-cardBorder bg-white flex-shrink-0"
+                       onerror="this.onerror=null;this.style.display='none';"
+                     />`
+                  : `<div class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-xs flex-shrink-0 shadow-2xs" style="background-color: ${acc.bankColor || '#3A6B8C'}">
+                       ${activePaymentTab === 'wallet' ? '📱' : '🏦'}
+                     </div>`
+              }
+              <div class="min-w-0">
+                <div class="font-bold text-hippo-navy text-[14.5px] leading-snug truncate">
+                  ${acc.bankName}
+                </div>
+                <div class="text-xs text-hippo-navyMuted truncate">
+                  ชื่อบัญชี: <strong class="text-hippo-navy font-semibold">${acc.accountName}</strong>
+                </div>
+              </div>
+            </div>
+            ${
+              acc.branch
+                ? `<span class="text-[10.5px] text-hippo-navyMuted bg-white px-2.5 py-0.5 rounded-full border border-hippo-cardBorder flex-shrink-0">
+                     ${acc.branch}
+                   </span>`
+                : ''
+            }
+          </div>
+
+          <div class="bg-white border border-hippo-cardBorder rounded-xl px-3.5 py-2.5 flex items-center justify-between gap-2">
+            <div>
+              <div class="text-[11px] text-hippo-navyMuted">${activePaymentTab === 'wallet' ? 'เบอร์วอเลต / รหัสพร้อมเพย์' : 'เลขที่บัญชี'}</div>
+              <div class="font-mono font-bold text-[16.5px] tracking-wider text-hippo-navy select-all">
+                ${acc.accountNumber}
+              </div>
+            </div>
+            <button
+              type="button"
+              id="copy-bank-btn-${originalIndex}"
+              onclick="copyBankNumber('${acc.accountNumber}', ${originalIndex})"
+              class="bg-hippo-btn hover:bg-hippo-btnHover active:scale-95 text-white text-xs font-semibold px-3.5 py-2 rounded-full transition flex items-center gap-1.5 shadow-xs flex-shrink-0"
+            >
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <rect x="9" y="9" width="13" height="13" rx="2"/>
+                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+              </svg>
+              <span>คัดลอก</span>
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+// ... existing code ...
+    function switchTab(tabId) {
+      if (!['home', 'groups', 'fsale', 'fonts'].includes(tabId)) return;
+
+      // หากกดแท็บกลุ่ม ให้กลับไปหน้ารวมกลุ่มหลักเสมอ
+      if (tabId === 'groups') {
+        closeGroupSubItemsPage();
+      }
+
+      // บันทึกตำแหน่งการเลื่อนของแท็บเดิม
+      tabScrollPositions[currentTab] = window.scrollY;
+      currentTab = tabId;
+
+      // สลับการแสดงผล Panel และปุ่มเมนูบาร์ด้านล่างทรงแคปซูลใหม่
+      ['home', 'groups', 'fsale', 'fonts'].forEach((id) => {
+        const panel = document.getElementById(`tab-${id}`);
+        const btn = document.getElementById(`nav-btn-${id}`);
+        if (id === tabId) {
+          panel.classList.remove('hidden');
+          panel.classList.remove('tab-animate');
+          void panel.offsetWidth; // trigger reflow for smooth animation
+          panel.classList.add('tab-animate');
+
+          btn.className = 'nav-tab-btn group flex flex-col items-center justify-center py-1.5 px-2 rounded-[22px] transition-all duration-200 bg-hippo-pill text-hippo-navy font-bold shadow-2xs';
+        } else {
+          panel.classList.add('hidden');
+          btn.className = 'nav-tab-btn group flex flex-col items-center justify-center py-1.5 px-2 rounded-[22px] transition-all duration-200 text-hippo-navyMuted hover:text-hippo-navy hover:bg-hippo-softBlue/60 font-medium';
+        }
+      });
+
+      // คืนค่าตำแหน่งเลื่อนของแท็บนั้น หรือเลื่อนขึ้นบนสุดอย่างนุ่มนวล
+      window.scrollTo({ top: tabScrollPositions[tabId] || 0, behavior: 'instant' });
+    }
+
+    // เปิดกล่องข้อมูลบัญชีธนาคาร / วอเลต
+    function openBankModal() {
+      switchPaymentTab(activePaymentTab || 'bank');
+      const modal = document.getElementById('bank-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+    }
+// ... existing code ...
+    /**
+     * ============================================================================
+     * 5. ระบบเครื่องเล่นแผ่นเสียงหมุน + เสียงดนตรีพาสเทลที่ได้ยินจริง + แตะหน้าจอเล่นเพลงแรกอัตโนมัติ
+     * ============================================================================
+     */
+    let audioCtx = null;
+    let isMusicPlaying = false;
+    let hasAutoStartedMusic = false;
+    let currentTrackIndex = 0;
+    let musicNoteStep = 0;
+    let musicIntervalId = null;
+    let customAudioEl = null;
+
+    function getMusicTracks() {
+      const tracks = SITE_DATA.brandHeader && SITE_DATA.brandHeader.musicTracks;
+      return (tracks && tracks.length) ? tracks : DEFAULT_SITE_DATA.brandHeader.musicTracks;
+    }
+
+    function renderMusicTrackList() {
+      const tracks = getMusicTracks();
+      const listEl = document.getElementById('music-track-list');
+      const titleEl = document.getElementById('music-current-title');
+      if (!listEl) return;
+
+      if (currentTrackIndex >= tracks.length) currentTrackIndex = 0;
+      const activeTrack = tracks[currentTrackIndex];
+      if (titleEl && activeTrack) {
+        titleEl.textContent = activeTrack.name;
+      }
+
+      listEl.innerHTML = tracks.map((t, idx) => {
+        const isSelected = idx === currentTrackIndex;
+        return `
+          <button
+            type="button"
+            onclick="selectMusicTrack(${idx})"
+            class="w-full text-left px-3 py-1.5 rounded-xl text-xs font-medium flex items-center justify-between gap-2 transition ${
+              isSelected
+                ? 'bg-hippo-pill text-hippo-navy font-bold border border-hippo-pillBorder'
+                : 'hover:bg-hippo-bg text-hippo-navyMuted'
+            }"
+          >
+            <span class="truncate">${t.name}</span>
+            <span class="text-[11px] flex-shrink-0">${isSelected ? (isMusicPlaying ? '🔊 กำลังเล่น' : '⏸ เลือกอยู่') : 'เลือก'}</span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function toggleMusicPopover(forceState) {
+      const pop = document.getElementById('music-popover');
+      if (!pop) return;
+      const shouldOpen = typeof forceState === 'boolean' ? forceState : pop.classList.contains('hidden');
+      if (shouldOpen) {
+        pop.classList.remove('hidden');
+        if (!isMusicPlaying) {
+          startMusicPlayback();
+        }
+      } else {
+        pop.classList.add('hidden');
+      }
+    }
+
+    // สร้างเสียงดนตรี Music Box ประสานคอร์ดที่ได้ยินเสียงชัดเจนและไพเราะจริงทุกอุปกรณ์
+    function playBellNote(freq) {
+      try {
+        if (!audioCtx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (!AudioContextClass) return;
+          audioCtx = new AudioContextClass();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+
+        const now = audioCtx.currentTime;
+
+        // โน้ตหลัก (Triangle + Sine เพื่อให้ได้ยินชัดบนลำโพงมือถือและ iPad)
+        const mainOsc = audioCtx.createOscillator();
+        const overtoneOsc = audioCtx.createOscillator();
+        const mainGain = audioCtx.createGain();
+        const overtoneGain = audioCtx.createGain();
+
+        mainOsc.type = 'triangle';
+        mainOsc.frequency.setValueAtTime(freq, now);
+
+        overtoneOsc.type = 'sine';
+        overtoneOsc.frequency.setValueAtTime(freq * 2, now);
+
+        mainGain.gain.setValueAtTime(0.001, now);
+        mainGain.gain.linearRampToValueAtTime(0.22, now + 0.02);
+        mainGain.gain.exponentialRampToValueAtTime(0.001, now + 0.75);
+
+        overtoneGain.gain.setValueAtTime(0.001, now);
+        overtoneGain.gain.linearRampToValueAtTime(0.07, now + 0.015);
+        overtoneGain.gain.exponentialRampToValueAtTime(0.0008, now + 0.45);
+
+        mainOsc.connect(mainGain);
+        overtoneOsc.connect(overtoneGain);
+        mainGain.connect(audioCtx.destination);
+        overtoneGain.connect(audioCtx.destination);
+
+        mainOsc.start(now);
+        overtoneOsc.start(now);
+        mainOsc.stop(now + 0.78);
+        overtoneOsc.stop(now + 0.48);
+      } catch (e) {
+        // ignore audio context restrictions
+      }
+    }
+
+    function startMusicPlayback() {
+      stopMusicScheduler();
+      isMusicPlaying = true;
+      hasAutoStartedMusic = true;
+      musicNoteStep = 0;
+
+      const tracks = getMusicTracks();
+      const track = tracks[currentTrackIndex] || tracks[0];
+
+      if (track && track.audioUrl && track.audioUrl.trim() !== '') {
+        if (!customAudioEl) {
+          customAudioEl = new Audio();
+          customAudioEl.loop = true;
+        }
+        customAudioEl.src = track.audioUrl.trim();
+        customAudioEl.volume = 0.75;
+        customAudioEl.play().catch(() => {});
+      } else {
+        const notes = (track && track.notes) || [523.25, 659.25, 783.99, 1046.5];
+        const intervalMs = Math.round((60 / ((track && track.tempo) || 120)) * 420);
+        playBellNote(notes[0]);
+        musicIntervalId = setInterval(() => {
+          if (!isMusicPlaying) return;
+          musicNoteStep = (musicNoteStep + 1) % notes.length;
+          playBellNote(notes[musicNoteStep]);
+        }, intervalMs);
+      }
+
+      updateMusicDiscUI();
+    }
+
+    // แตะหน้าจอจุดไหนก็ได้ครั้งแรก เพลงที่ 1 จะเริ่มเล่นอัตโนมัติทันที
+    function setupAutoPlayOnFirstInteraction() {
+      const triggerFirstPlay = () => {
+        if (!hasAutoStartedMusic && !isMusicPlaying) {
+          currentTrackIndex = 0;
+          startMusicPlayback();
+        }
+        ['pointerdown', 'touchstart', 'click', 'keydown'].forEach((evt) => {
+          document.removeEventListener(evt, triggerFirstPlay, { capture: true });
+        });
+      };
+
+      ['pointerdown', 'touchstart', 'click', 'keydown'].forEach((evt) => {
+        document.addEventListener(evt, triggerFirstPlay, { capture: true, passive: true });
+      });
+    }
+// ... existing code ...
+    // 4. เพิ่ม/แก้ไข/ลบ ข้อมูลบัญชีธนาคารและวอเลต (ใส่ได้มากกว่า 1 บัญชี และใส่รูปได้)
+    function openBankAdminModal(index, defaultCategory) {
+      const isNew = index < 0;
+      const categoryToUse = defaultCategory || activePaymentTab || 'bank';
+      const item = isNew
+        ? {
+            category: categoryToUse,
+            bankName: categoryToUse === 'wallet' ? 'TrueMoney Wallet' : 'ธนาคารกสิกรไทย (KBank)',
+            bankColor: categoryToUse === 'wallet' ? '#FF6600' : '#138F2D',
+            accountName: '',
+            accountNumber: '',
+            branch: '',
+            imageUrl: ''
+          }
+        : SITE_DATA.bankAccounts[index];
+
+      openAdminModal({
+        title: isNew ? 'เพิ่มช่องทางการโอนเงินใหม่' : 'แก้ไขข้อมูลช่องทางการโอนเงิน',
+        canDelete: !isNew && SITE_DATA.bankAccounts.length > 1,
+        fields: [
+          { name: 'category', label: 'หมวดหมู่ (พิมพ์ bank สำหรับธนาคาร หรือ wallet สำหรับวอเลต)', value: item.category || 'bank' },
+          { name: 'bankName', label: 'ชื่อธนาคาร / ชื่อวอเลต', value: item.bankName },
+          { name: 'accountName', label: 'ชื่อบัญชี', value: item.accountName },
+          { name: 'accountNumber', label: 'เลขที่บัญชี / เบอร์วอเลต', value: item.accountNumber },
+          { name: 'imageUrl', label: 'ลิงก์รูปโลโก้ธนาคาร/วอเลต หรือรูป QR (URL - เว้นว่างได้)', value: item.imageUrl || '' },
+          { name: 'branch', label: 'ป้ายกำกับย่อย / สาขา', value: item.branch || '' },
+          { name: 'bankColor', label: 'โค้ดสีประจำธนาคาร/วอเลต (เช่น #138F2D)', value: item.bankColor || '#3A6B8C' }
+        ],
+        onSave: (vals) => {
+          const cleanCat = (vals.category || '').toLowerCase() === 'wallet' ? 'wallet' : 'bank';
+          const updated = {
+            id: item.id || `bank-${Date.now()}`,
+            category: cleanCat,
+            bankName: vals.bankName || 'บัญชีรับโอน',
+            accountName: vals.accountName || '-',
+            accountNumber: vals.accountNumber || '000-0-00000-0',
+            imageUrl: vals.imageUrl || '',
+            branch: vals.branch || '',
+            bankColor: vals.bankColor || '#3A6B8C'
+          };
+          if (isNew) SITE_DATA.bankAccounts.push(updated);
+          else SITE_DATA.bankAccounts[index] = updated;
+          switchPaymentTab(cleanCat);
+        },
+        onDelete: () => {
+          SITE_DATA.bankAccounts.splice(index, 1);
+        }
+      });
+    }
+// ... existing code ...
+    // เริ่มต้นสร้างเนื้อหาทั้งหมดเมื่อเปิดหน้าเว็บ + ตั้งค่าแตะหน้าจอเล่นเพลงแรกอัตโนมัติ
+    window.onload = function () {
+      renderAllSections();
+      setupAutoPlayOnFirstInteraction();
+    };
+  </script>
+</body>
+</html>
