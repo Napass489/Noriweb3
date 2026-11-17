@@ -138,9 +138,319 @@
       text-shadow: 0 1px 2px rgba(255,255,255,0.9);
       animation: floatMusicNote 2.4s ease-out infinite;
     }
+
+    .nh-intro {
+      box-sizing: border-box;
+      border: 0;
+      padding: 0;
+      color: #173D5C;
+      text-align: center;
+    }
+    .nh-intro[open] { display: grid; place-items: center; }
+    .nh-intro::backdrop { background: rgb(23 61 92 / 28%); }
+    #nh-loading-dialog {
+      position: fixed;
+      inset: 0;
+      margin: 0;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      max-width: none;
+      max-height: none;
+      border-radius: 0;
+      overflow: auto;
+      background: linear-gradient(160deg, #D7EDFF, #F5FAFF 70%);
+      transition: opacity .22s ease;
+    }
+    #nh-loading-dialog::backdrop { background: transparent; }
+    .nh-intro.is-fading { opacity: 0; }
+    #nh-welcome-dialog {
+      position: fixed;
+      inset: 0;
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      max-width: none;
+      max-height: none;
+      background: transparent;
+      overflow: hidden;
+    }
+    #nh-welcome-dialog::backdrop { background: rgb(247 252 255 / 82%); }
+    #nh-welcome-dialog .nh-welcome-panel {
+      width: min(550px, calc(100% - 32px));
+      max-height: calc(100% - 32px);
+      overflow: auto;
+      border-radius: 24px;
+      border: 1px solid #B6DBF9;
+      background: #FFF;
+      box-shadow: 0 12px 38px rgb(34 101 155 / 12%);
+    }
+    .nh-intro-panel { box-sizing: border-box; position: relative; width: 100%; padding: 32px 24px; }
+    .nh-logo-ripple {
+      position: relative;
+      isolation: isolate;
+      width: 124px;
+      height: 124px;
+      margin: 0 auto 9px;
+    }
+    .nh-logo-ripple::before, .nh-logo-ripple::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border: 2px solid #78B9EA;
+      border-radius: 50%;
+      z-index: -1;
+      opacity: 0;
+      animation: nh-logo-ripple 1.35s ease-out infinite;
+    }
+    .nh-logo-ripple::after { animation-delay: .38s; }
+    @keyframes nh-logo-ripple {
+      0% { opacity: .6; transform: scale(1); }
+      100% { opacity: 0; transform: scale(1.36); }
+    }
+    .nh-intro-logo {
+      display: block;
+      width: 124px;
+      height: 124px;
+      margin: 0;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .nh-intro-logo[hidden], #nh-progress-mascot[hidden], .nh-welcome-nav[hidden] { display: none; }
+    .nh-intro-name { margin-bottom: 4px; font-size: 22px; font-weight: 700; }
+    .nh-progress {
+      --nh-progress: 0%;
+      position: relative;
+      width: min(300px, calc(100% - 52px));
+      margin: 54px auto 0;
+    }
+    .nh-progress-track {
+      height: 12px;
+      border-radius: 999px;
+      background: #DCEBFA;
+      overflow: hidden;
+    }
+    .nh-progress-fill {
+      width: var(--nh-progress);
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #86C9FB, #3A79AA);
+    }
+    #nh-progress-mascot {
+      position: absolute;
+      left: var(--nh-progress);
+      bottom: calc(100% + 3px);
+      width: 50px;
+      height: 50px;
+      object-fit: contain;
+      transform: translateX(-50%);
+    }
+    .nh-progress-label {
+      display: block;
+      margin-top: 8px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+    .nh-welcome-panel { padding: 28px clamp(16px, 5vw, 30px); }
+    .nh-welcome-heading {
+      margin: 0 22px 12px;
+      color: #24628E;
+      font-size: clamp(18px, 4vw, 22px);
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+    .nh-welcome-heading[hidden] { display: none; }
+    #nh-welcome-dialog #nh-intro-enter {
+      width: 100%;
+      background: linear-gradient(100deg, #246B9C, #576FB0);
+    }
+    #nh-welcome-content { max-height: 46vh; max-height: 46dvh; overflow: auto; }
+    .nh-welcome-text { font-size: 15px; line-height: 1.65; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .nh-welcome-images { display: grid; gap: 10px; }
+    .nh-welcome-images:not(:empty) { margin-top: 12px; }
+    .nh-welcome-images img { display: block; width: 100%; height: auto; border-radius: 14px; }
+    .nh-welcome-nav { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 12px; }
+    .nh-welcome-nav button { min-width: 44px; min-height: 44px; border: 1px solid #BFE0FF; border-radius: 999px; }
+    .nh-welcome-nav button:disabled { opacity: .38; }
+    .nh-intro-enter {
+      margin-top: 16px;
+      min-height: 44px;
+      padding: 8px 24px;
+      border-radius: 999px;
+      background: #3A6B8C;
+      color: white;
+      font-weight: 600;
+    }
+    .nh-intro-close {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      font-size: 24px;
+    }
+    .nh-intro-enter:focus-visible, .nh-intro-close:focus-visible {
+      outline: 2px solid #173D5C;
+      outline-offset: 3px;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .nh-intro, .nh-intro *, .nh-intro::backdrop, .nh-logo-ripple::before, .nh-logo-ripple::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col items-center justify-start selection:bg-hippo-pill selection:text-hippo-navy">
+
+  <dialog id="nh-loading-dialog" class="nh-intro" aria-label="กำลังโหลดเว็บไซต์">
+    <div class="nh-intro-panel" id="nh-intro-loading">
+      <div class="nh-logo-ripple">
+        <img id="nh-intro-logo" class="nh-intro-logo" src="https://i.postimg.cc/DZh9HDR8/att-M3asi-Xguj-W3IZ3m-Ab9uro-JUz-YHko1YXX74ez-Vh8f-Fk.jpg" alt="" onerror="this.hidden=true">
+      </div>
+      <p id="nh-intro-brand" class="nh-intro-name">NongHippo</p>
+      <div class="nh-progress" id="nh-progress">
+        <img id="nh-progress-mascot" src="https://i.postimg.cc/htfCbBjy/mi-m-ch-x-62-20261117124907.png" alt="" onerror="this.hidden=true">
+        <div id="nh-progress-track" class="nh-progress-track" role="progressbar" aria-label="ความคืบหน้าในการเปิดร้าน" aria-valuenow="0">
+          <div class="nh-progress-fill"></div>
+        </div>
+        <span id="nh-progress-label" class="nh-progress-label" aria-hidden="true">0%</span>
+      </div>
+    </div>
+  </dialog>
+  <dialog id="nh-welcome-dialog" class="nh-intro" aria-labelledby="nh-intro-welcome-title">
+    <div class="nh-intro-panel nh-welcome-panel">
+      <form method="dialog">
+        <button class="nh-intro-close" type="submit" aria-label="ปิดป๊อปอัป">×</button>
+        <span id="nh-intro-welcome-title" class="sr-only">ป๊อปอัปต้อนรับ NongHippo</span>
+        <h2 id="nh-welcome-heading" class="nh-welcome-heading" hidden></h2>
+        <div id="nh-welcome-content" aria-live="polite">
+          <p id="nh-welcome-text" class="nh-welcome-text" hidden></p>
+          <div id="nh-welcome-images" class="nh-welcome-images"></div>
+        </div>
+        <div id="nh-welcome-nav" class="nh-welcome-nav" hidden>
+          <button id="nh-welcome-prev" type="button" aria-label="หน้าก่อนหน้า">‹</button>
+          <span id="nh-welcome-count" aria-live="polite"></span>
+          <button id="nh-welcome-next" type="button" aria-label="หน้าถัดไป">›</button>
+        </div>
+        <button id="nh-intro-enter" class="nh-intro-enter" type="submit">รับทราบค่ะ 🫧</button>
+      </form>
+    </div>
+  </dialog>
+  <script>
+    (() => {
+      const loadingDialog = document.getElementById('nh-loading-dialog');
+      const welcomeDialog = document.getElementById('nh-welcome-dialog');
+      if (typeof loadingDialog.showModal !== 'function') return;
+
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const previousOverflow = document.body.style.overflow;
+      const progress = document.getElementById('nh-progress');
+      const track = document.getElementById('nh-progress-track');
+      const label = document.getElementById('nh-progress-label');
+      const startedAt = performance.now();
+      let readyAt = null;
+      let pages = [];
+      let pageIndex = 0;
+      let progressValue = 0;
+      let readyProgress = 0;
+
+      loadingDialog.showModal();
+      document.body.style.overflow = 'hidden';
+      loadingDialog.addEventListener('cancel', event => event.preventDefault());
+      welcomeDialog.addEventListener('close', () => {
+        document.body.style.overflow = previousOverflow;
+      });
+
+      const heading = document.getElementById('nh-welcome-heading');
+      const welcomeText = document.getElementById('nh-welcome-text');
+      const welcomeImages = document.getElementById('nh-welcome-images');
+      const prev = document.getElementById('nh-welcome-prev');
+      const next = document.getElementById('nh-welcome-next');
+
+      function showWelcomePage() {
+        const page = pages[pageIndex];
+        heading.textContent = page.title || '';
+        heading.hidden = !page.title;
+        welcomeText.textContent = page.text;
+        welcomeText.hidden = !page.text;
+        welcomeImages.replaceChildren(...page.images.map((url, index) => {
+          const image = document.createElement('img');
+          image.alt = 'รูปต้อนรับ ' + (index + 1);
+          image.src = url;
+          return image;
+        }));
+        document.getElementById('nh-welcome-nav').hidden = pages.length < 2;
+        document.getElementById('nh-welcome-count').textContent = (pageIndex + 1) + ' / ' + pages.length;
+        prev.disabled = pageIndex === 0;
+        next.disabled = pageIndex === pages.length - 1;
+        document.getElementById('nh-welcome-content').scrollTop = 0;
+      }
+
+      prev.addEventListener('click', () => {
+        pageIndex -= 1;
+        showWelcomePage();
+      });
+      next.addEventListener('click', () => {
+        pageIndex += 1;
+        showWelcomePage();
+      });
+
+      function finishLoading() {
+        const welcomeKey = 'nonghippo.welcome.seen';
+        let alreadySeen = false;
+        try { alreadySeen = sessionStorage.getItem(welcomeKey) === '1'; } catch {}
+        loadingDialog.close();
+        if (alreadySeen || pages.length === 0) {
+          document.body.style.overflow = previousOverflow;
+          return;
+        }
+
+        showWelcomePage();
+        welcomeDialog.showModal();
+        try { sessionStorage.setItem(welcomeKey, '1'); } catch {}
+        document.getElementById('nh-intro-enter').focus({ preventScroll: true });
+      }
+
+      function updateProgress(now) {
+        const elapsed = now - startedAt;
+        if (readyAt === null) {
+          progressValue = Math.min(90, Math.floor(elapsed / 12));
+        } else {
+          const completion = reducedMotion ? 1 : Math.min(1, Math.max(0, (now - readyAt) / 420));
+          progressValue = Math.round(readyProgress + (100 - readyProgress) * completion);
+        }
+
+        progress.style.setProperty('--nh-progress', progressValue + '%');
+        label.textContent = progressValue + '%';
+        track.setAttribute('aria-valuenow', progressValue);
+        if (progressValue < 100) {
+          requestAnimationFrame(updateProgress);
+          return;
+        }
+
+        window.setTimeout(() => {
+          loadingDialog.classList.add('is-fading');
+          window.setTimeout(finishLoading, reducedMotion ? 0 : 220);
+        }, reducedMotion ? 0 : 180);
+      }
+
+      function markReady(configuredPages) {
+        pages = configuredPages || pages;
+        if (readyAt !== null) return;
+        readyAt = Math.max(performance.now(), startedAt + (reducedMotion ? 0 : 420));
+        readyProgress = progressValue;
+      }
+
+      const fallback = window.setTimeout(markReady, 4500);
+      document.addEventListener('nonghippo:ready', event => {
+        window.clearTimeout(fallback);
+        markReady(event.detail);
+      }, { once: true });
+      requestAnimationFrame(updateProgress);
+    })();
+  </script>
 
   <!-- =====================================================================
        MAIN APP CONTAINER: Centered mobile viewport on desktop/tablet
@@ -148,12 +458,13 @@
   <div class="w-full max-w-[520px] min-h-screen bg-hippo-bg shadow-xl relative flex flex-col overflow-x-hidden border-x border-hippo-cardBorder/70">
 
     <!-- Admin Status Bar (Toggled via the logo avatar) -->
-    <div id="admin-statusbar" class="hidden bg-hippo-navy text-white px-3.5 py-2 text-xs items-center justify-between gap-2 z-40 sticky top-0 shadow-md">
+    <div id="admin-statusbar" class="hidden bg-hippo-navy text-white px-3.5 py-2 text-xs items-center justify-between gap-2 flex-wrap z-40 sticky top-0 shadow-md">
       <div class="flex items-center gap-1.5 font-semibold">
         <span class="w-2 h-2 rounded-full bg-[#8CE99A] animate-pulse"></span>
         <span>โหมดแอดมิน: แก้ไข เพิ่ม หรือลบข้อมูลในแต่ละหน้าได้โดยตรง</span>
       </div>
-      <div class="flex items-center gap-1.5">
+      <div class="flex flex-wrap items-center gap-1.5">
+        <button type="button" onclick="openWelcomeAdminModal()" class="px-2.5 py-1 rounded-full bg-white/15 hover:bg-white/25 text-[11px] font-medium transition">ป๊อปอัปต้อนรับ</button>
         <button
           type="button"
           onclick="resetSiteDataToDefault()"
@@ -369,7 +680,7 @@
                 class="w-20 h-16 flex-shrink-0 flex items-center justify-center select-none hippo-float cursor-pointer group relative"
                 aria-hidden="true"
               >
-                <div class="w-16 h-16 rounded-2xl overflow-hidden bg-white/80 border border-hippo-cardBorder shadow-xs group-hover:scale-110 group-active:scale-95 transition-transform duration-300 flex items-center justify-center p-1">
+                <div class="w-16 h-16 group-hover:scale-110 group-active:scale-95 transition-transform duration-300 flex items-center justify-center">
                   <img
                     src="https://i.postimg.cc/jdZ3gNgw/besh-h-155-20260802233555.png"
                     alt="Mascot Hippo"
@@ -377,7 +688,6 @@
                     onerror="this.onerror=null;this.src='https://placehold.co/120x120/D7EDFF/173D5C?text=Hippo';"
                   />
                 </div>
-                <span class="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-[#FFB6C1] animate-ping opacity-75"></span>
               </div>
             </div>
           </section>
@@ -832,6 +1142,18 @@
     let activeGroupModalIndex = 0;
 
     const DEFAULT_SITE_DATA = {
+      welcomePages: [
+        {
+          title: 'ยินดีต้อนรับสู่ NongHippo 🫧',
+          text: 'แวะชมสติกเกอร์ ของตกแต่ง งานปล่อยเอฟ และตัวอย่างฟอนต์ลายมือได้จากเมนูด้านล่างค่ะ\nถ้าสนใจชิ้นไหนหรืออยากสอบถามเพิ่มเติม กดช่องทางติดต่อที่หน้าหลักได้เลย 💙',
+          images: []
+        },
+        {
+          title: '',
+          text: '',
+          images: ['https://i.postimg.cc/KvCsCwMF/IMG-9047.jpg']
+        }
+      ],
       brandHeader: {
         name: 'NongHippo',
         badge: 'Official',
@@ -1154,6 +1476,14 @@
     }
 
     let SITE_DATA = loadSiteData();
+
+    const introBrand = SITE_DATA.brandHeader || DEFAULT_SITE_DATA.brandHeader;
+    const introLogo = document.getElementById('nh-intro-logo');
+    if (introBrand.logoUrl && introLogo.getAttribute('src') !== introBrand.logoUrl) {
+      introLogo.hidden = false;
+      introLogo.src = introBrand.logoUrl;
+    }
+    document.getElementById('nh-intro-brand').textContent = introBrand.name || 'NongHippo';
 
     function saveSiteData() {
       try {
@@ -1644,10 +1974,37 @@
       const cards = track.children;
       if (cards[index]) {
         track.scrollTo({
-          left: cards[index].offsetLeft,
+          left: cards[index].offsetLeft - cards[0].offsetLeft,
           behavior: 'smooth'
         });
       }
+    }
+
+    function startBannerAutoplay() {
+      const track = document.getElementById('banner-track');
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+      let resumeAfter = 0;
+      function pauseAfterInteraction() {
+        resumeAfter = performance.now() + 5000;
+      }
+
+      track.addEventListener('pointerdown', pauseAfterInteraction);
+      track.addEventListener('pointerup', pauseAfterInteraction);
+      track.addEventListener('wheel', pauseAfterInteraction, { passive: true });
+      document.getElementById('banner-dots').addEventListener('click', pauseAfterInteraction);
+
+      window.setInterval(() => {
+        const cards = track.children;
+        if (cards.length < 2 || !track.clientWidth || document.hidden || isAdminMode ||
+            reducedMotion.matches || document.querySelector('.nh-intro[open]') ||
+            track.matches(':hover') || track.querySelector(':focus-visible') ||
+            performance.now() < resumeAfter) return;
+
+        const distance = cards[1].offsetLeft - cards[0].offsetLeft;
+        if (distance <= 0) return;
+        const current = Math.round(track.scrollLeft / distance);
+        scrollToBanner((current + 1) % cards.length);
+      }, 4500);
     }
 
     function handleBannerClick(index) {
@@ -2798,7 +3155,7 @@
       const formData = new FormData(event.target);
       const values = {};
       formData.forEach((v, k) => { values[k] = typeof v === 'string' ? v.trim() : v; });
-      currentAdminEditConfig.onSave(values);
+      if (currentAdminEditConfig.onSave(values) === false) return;
       saveSiteData();
       renderAllSections();
       closeModal('admin-editor-modal');
@@ -2812,6 +3169,69 @@
       renderAllSections();
       closeModal('admin-editor-modal');
       showToast('ลบรายการเรียบร้อยแล้ว');
+    }
+
+    function getWelcomePages() {
+      const pages = Array.isArray(SITE_DATA.welcomePages) ? SITE_DATA.welcomePages : DEFAULT_SITE_DATA.welcomePages;
+      return pages.map(page => ({
+        title: typeof page?.title === 'string' ? page.title.trim() : '',
+        text: typeof page?.text === 'string' ? page.text.trim() : '',
+        images: Array.isArray(page?.images)
+          ? page.images.filter(url => typeof url === 'string' && /^https?:\/\/[^\s]+$/i.test(url))
+          : []
+      })).filter(page => page.title || page.text || page.images.length);
+    }
+
+    function openWelcomeAdminModal(draft = getWelcomePages()) {
+      const pages = draft.length ? draft : [{ title: '', text: '', images: [] }];
+      const readPages = (form) => pages.map((_, index) => ({
+        title: String(form.get('welcomeTitle' + index) || '').trim(),
+        text: String(form.get('welcomeText' + index) || '').trim(),
+        images: String(form.get('welcomeLinks' + index) || '').split(/\r?\n/)
+          .map(link => link.trim()).filter(Boolean)
+      }));
+      const escapeTextarea = text => text.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+
+      openAdminModal({
+        title: 'ป๊อปอัปต้อนรับ',
+        canDelete: false,
+        fields: pages.flatMap((page, index) => [
+          { name: 'welcomeTitle' + index, type: 'textarea', label: 'หน้า ' + (index + 1) + ' · หัวข้อ',
+            value: escapeTextarea(page.title) },
+          { name: 'welcomeText' + index, type: 'textarea', label: 'ข้อความ',
+            value: escapeTextarea(page.text) },
+          { name: 'welcomeLinks' + index, type: 'textarea', label: 'ลิงก์รูปภาพ · 1 ลิงก์ต่อบรรทัด',
+            value: escapeTextarea(page.images.join('\n')) }
+        ]),
+        onSave: () => {
+          const form = document.getElementById('admin-editor-form');
+          const draftPages = readPages(new FormData(form));
+          const invalidPage = draftPages.findIndex(page => page.images.some(url => !/^https?:\/\/[^\s]+$/i.test(url)));
+          if (invalidPage !== -1) {
+            showToast('ตรวจลิงก์รูปภาพในหน้า ' + (invalidPage + 1) + ' ให้ขึ้นต้นด้วย https:// หรือ http://');
+            form.elements['welcomeLinks' + invalidPage].focus();
+            return false;
+          }
+          SITE_DATA.welcomePages = draftPages.filter(page => page.title || page.text || page.images.length);
+        }
+      });
+
+      const form = document.getElementById('admin-editor-form');
+      const fields = document.getElementById('admin-editor-fields');
+      const hint = document.createElement('p');
+      hint.className = 'text-xs text-hippo-navyMuted';
+      hint.textContent = 'หัวข้อ ข้อความ และรูป เลือกเว้นว่างได้ ถ้าต้องการลบหน้า ให้ล้างทุกช่องของหน้านั้นแล้วบันทึก';
+      fields.prepend(hint);
+
+      const add = document.createElement('button');
+      add.type = 'button';
+      add.className = 'px-4 py-2 rounded-full border border-hippo-pillBorder text-hippo-navy text-xs font-semibold';
+      add.textContent = '+ เพิ่มหน้าป๊อปอัป';
+      add.addEventListener('click', () => {
+        openWelcomeAdminModal([...readPages(new FormData(form)), { title: '', text: '', images: [] }]);
+        form.elements['welcomeTitle' + pages.length].focus();
+      });
+      fields.append(add);
     }
 
     function openHeaderAdminModal() {
@@ -3268,10 +3688,12 @@
       renderBankAccounts();
     }
 
-    window.onload = function () {
+    document.addEventListener('DOMContentLoaded', () => {
       renderAllSections();
       setupFirstInteractionAutoplay();
-    };
+      startBannerAutoplay();
+      document.dispatchEvent(new CustomEvent('nonghippo:ready', { detail: getWelcomePages() }));
+    }, { once: true });
   </script>
 </body>
 </html>
